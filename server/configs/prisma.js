@@ -1,22 +1,27 @@
-import 'dotenv/config';
 import { PrismaClient } from '@prisma/client';
 import { PrismaNeon } from '@prisma/adapter-neon';
 import { Pool, neonConfig } from '@neondatabase/serverless';
 import ws from 'ws';
 
-// Required for Node.js environments (like Windows/VS Code terminal)
+// WebSocket fix
 neonConfig.webSocketConstructor = ws;
 
-const connectionString = process.env.DATABASE_URL;
+const createPrismaClient = () => {
+  const connectionString = process.env.DATABASE_URL;
 
-// Create the pool and adapter
-const pool = new Pool({ connectionString });
-const adapter = new PrismaNeon(pool);
+  if (!connectionString) {
+    throw new Error("DATABASE_URL is missing from environment variables");
+  }
 
-// Use globalThis to prevent exhaustion of database connections during hot-reloads
-const prisma = globalThis.prisma || new PrismaClient({ adapter });
+  const pool = new Pool({ connectionString });
+  const adapter = new PrismaNeon(pool);
+  return new PrismaClient({ adapter });
+};
 
-if (process.env.NODE_ENV === 'development') {
+// Singleton pattern for dev and prod
+const prisma = globalThis.prisma || createPrismaClient();
+
+if (process.env.NODE_ENV !== 'production') {
   globalThis.prisma = prisma;
 }
 
