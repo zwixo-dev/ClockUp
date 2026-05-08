@@ -18,7 +18,7 @@ app.get("/", (req, res)=>{
     res.status(200).send("Test");
 });
 
-// app.use("/api/inngest", serve({ client: inngest, functions }));
+app.use("/api/inngest", serve({ client: inngest, functions }));
 
 const port = 3000;
 
