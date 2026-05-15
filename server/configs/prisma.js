@@ -3,8 +3,9 @@ import { PrismaNeon } from '@prisma/adapter-neon';
 import { Pool, neonConfig } from '@neondatabase/serverless';
 import ws from 'ws';
 
-// WebSocket fix
 neonConfig.webSocketConstructor = ws;
+neonConfig.poolQueryViaFetch = false; // switch back to WebSocket
+neonConfig.fetchConnectionCache = true;
 
 const createPrismaClient = () => {
   const connectionString = process.env.DATABASE_URL;
@@ -18,7 +19,6 @@ const createPrismaClient = () => {
   return new PrismaClient({ adapter });
 };
 
-// Singleton pattern for dev and prod
 const prisma = globalThis.prisma || createPrismaClient();
 
 if (process.env.NODE_ENV !== 'production') {
