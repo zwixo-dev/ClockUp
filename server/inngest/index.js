@@ -63,7 +63,7 @@ const syncWorkspaceCreation = inngest.createFunction(
             data: {
                 id: data.id,
                 name: data.name,
-                slug: data.slug, 
+                slug: data.slug,
                 ownerId: data.created_by,
                 image_url: data.image_url
             }
@@ -74,7 +74,7 @@ const syncWorkspaceCreation = inngest.createFunction(
             data: {
                 userId: data.created_by,
                 workspaceId: data.id,
-                role: "Admin"
+                role: "ADMIN"
             }
         });
     }
